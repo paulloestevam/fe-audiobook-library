@@ -1,1 +1,2 @@
 /* CSS base limpo para o projeto Vue */
+:root { --bg-color: #f3f3f3; --card-bg: #ffffff; --text-main: #111; --text-sec: #555; --accent: #e09f00; --star-color: #ffa41c; }
