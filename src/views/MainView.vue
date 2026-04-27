@@ -164,21 +164,20 @@ const getImageUrl = (filename) => {
         </div>
 
         <div class="section-title">
-          <span v-if="book.genre" class="meta-tag">{{ book.genre }}</span>
           <span class="title" :title="book.title">{{ book.title }}</span>
+          <span v-if="book.genre" class="meta-tag">{{ book.genre }}</span>
         </div>
 
         <div class="section-meta">
+          <div class="author"><span class="author-label">De:</span> <span class="author-name">{{ book.author }}</span></div>
+          <div class="duration-info" v-if="book.duration">Duração: {{ book.duration }}</div>
           <div v-if="book.rating" class="rating-container">
-            <span class="rating-stars">★ {{ book.rating }}</span>
-            <span class="rating-count" v-if="book.reviewsCount">({{ book.reviewsCount }})</span>
+            <span class="rating-stars"><span class="stars">★</span>{{ book.rating }} </span>
+            <span class="rating-count" v-if="book.reviewsCount">{{ book.reviewsCount }} avaliações</span>
           </div>
-          <div class="author">Autor: {{ book.author }}</div>
-          <div class="grid-time" v-if="book.duration">Duração: {{ book.duration }}</div>
         </div>
 
         <div class="section-desc">
-          <div class="list-time" v-if="book.duration">Duração: {{ book.duration }}</div>
           <p class="description">{{ book.description || 'Nenhuma descrição disponível para este audiobook.' }}</p>
         </div>
         
