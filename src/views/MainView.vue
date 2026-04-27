@@ -90,9 +90,14 @@ const getImageUrl = (filename) => {
           <h1>📚 Biblioteca</h1>
           <span class="book-count">Total de livros: {{ filteredBooks.length }}</span>
         </div>
-        <a href="https://192.168.1.150/downloads/Smart%20AudioBook%20Player%20v10.7.0%20Premium%20Mod%20Apk%20%7BCracksHash%7D.apk" class="apk-link">
-          📱 Baixar App Player
-        </a>
+        <div class="header-links">
+          <router-link to="/admin" class="admin-link">
+            ⚙️ Painel Admin
+          </router-link>
+          <a href="https://192.168.1.150/downloads/Smart%20AudioBook%20Player%20v10.7.0%20Premium%20Mod%20Apk%20%7BCracksHash%7D.apk" class="apk-link">
+            📱 Baixar App Player
+          </a>
+        </div>
       </div>
       <div class="header-bottom">
         <div class="search-group">

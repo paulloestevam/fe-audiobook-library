@@ -44,6 +44,31 @@ h1 {
     border-radius: 10px;
 }
 
+.header-links {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.admin-link {
+    font-size: 0.85rem;
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 6px 12px;
+    background-color: #f0f0f0;
+    border-radius: 6px;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.admin-link:hover {
+    background-color: var(--accent);
+    color: white;
+}
+
 .apk-link {
     font-size: 0.70rem;
     color: #999;

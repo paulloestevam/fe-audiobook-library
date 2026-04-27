@@ -1,0 +1,358 @@
+.admin-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  color: #333;
+}
+
+.header {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 1rem;
+}
+
+.header-title h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #1a1a2e;
+  font-weight: 700;
+}
+
+.book-count {
+  font-size: 0.95rem;
+  color: #666;
+  margin-top: 0.5rem;
+  display: inline-block;
+  background: #f4f4f9;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.nav-link {
+  text-decoration: none;
+  background: #1a1a2e;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-link:hover {
+  background: #2a2a4a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(26, 26, 46, 0.2);
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.sort-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.sort-select {
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: #f9f9f9;
+  color: #333;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.sort-select:focus {
+  border-color: #007bff;
+}
+
+/* Table styles */
+.table-wrapper {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+
+.admin-table th {
+  background: #f8f9fa;
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6c757d;
+  font-weight: 700;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.sortable:hover {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.admin-table td {
+  padding: 1rem 1.5rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #e9ecef;
+  color: #495057;
+  font-size: 0.95rem;
+}
+
+.admin-table tr:hover {
+  background-color: #f8f9fa;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.cell-title {
+  font-weight: 600;
+  color: #212529;
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cell-author {
+  font-weight: 500;
+}
+
+.cell-duration {
+  font-variant-numeric: tabular-nums;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badge-ficcao {
+  background-color: #f3e8ff;
+  color: #7e22ce;
+}
+
+.badge-nao-ficcao {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.badge-literatura {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.badge-genre {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.badge-empty {
+  background-color: #f1f5f9;
+  color: #94a3b8;
+}
+
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.status-indicator.restricted {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-indicator.free {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+/* Actions Menu */
+.actions-col {
+  width: 120px;
+  text-align: right;
+}
+
+.menu-container {
+  position: relative;
+  display: inline-block;
+}
+
+.btn-options {
+  background: transparent;
+  border: none;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 2px;
+  line-height: 1;
+}
+
+.btn-options:hover {
+  background: #e9ecef;
+  color: #212529;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e9ecef;
+  min-width: 180px;
+  z-index: 100;
+  padding: 0.5rem 0;
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  background: transparent;
+  font-size: 0.9rem;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-weight: 500;
+}
+
+.dropdown-item:hover {
+  background: #f8f9fa;
+  color: #007bff;
+}
+
+.dropdown-item.text-danger {
+  color: #dc3545;
+}
+
+.dropdown-item.text-danger:hover {
+  background: #fff5f5;
+  color: #bd2130;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #e9ecef;
+  margin: 0.4rem 0;
+}
+
+/* Submenu */
+.dropdown-submenu-container {
+  position: relative;
+}
+
+.has-submenu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dropdown-submenu {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  margin-right: 4px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e9ecef;
+  min-width: 150px;
+  padding: 0.5rem 0;
+  animation: slideIn 0.2s ease-out forwards;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* States */
+.loading-state, .error-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.error-state {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
