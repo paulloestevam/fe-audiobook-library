@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { fetchBooksFromApi } from '../services/audiobookService'
+import { IMAGES_URL, DOWNLOADS_URL } from '../config'
+
 
 const books = ref([])
 const viewMode = ref('mode-compact')
@@ -70,15 +72,18 @@ const filteredBooks = computed(() => {
   return result
 })
 
-const images = import.meta.glob('../assets/images/*', { eager: true, as: 'url' })
-
 const getImageUrl = (filename) => {
   if (!filename) return '/vite.svg'
   
   if (filename.includes('http')) return filename
   
-  const path = `../assets/images/${filename}`
-  return images[path] || '/vite.svg'
+  return `${IMAGES_URL}/${filename}`
+}
+
+const getDownloadUrl = (filename) => {
+  if (!filename) return '#'
+  if (filename.includes('http')) return filename
+  return `${DOWNLOADS_URL}/${filename}`
 }
 </script>
 
@@ -163,7 +168,7 @@ const getImageUrl = (filename) => {
           <img :src="getImageUrl(book.imageFilename)" class="cover-bg-blur" alt="" />
           <img :src="getImageUrl(book.imageFilename)" class="cover-img" :alt="book.title" />
           
-          <a v-if="book.zipFilename" href="#" class="btn-download" title="Baixar Audiobook">
+          <a v-if="book.zipFilename" :href="getDownloadUrl(book.zipFilename)" @click.stop class="btn-download" title="Baixar Audiobook" download>
             <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
           </a>
         </div>
