@@ -1,5 +1,5 @@
 .admin-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 1rem;
   color: #333;
@@ -108,9 +108,9 @@
 
 .admin-table th {
   background: #f8f9fa;
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1rem;
   text-align: left;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #6c757d;
@@ -129,12 +129,13 @@
   color: #495057;
 }
 
+
 .admin-table td {
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1rem;
   vertical-align: middle;
   border-bottom: 1px solid #e9ecef;
   color: #495057;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
 }
 
 .admin-table tr:hover {
@@ -148,13 +149,21 @@
 .cell-title {
   font-weight: 600;
   color: #212529;
-  max-width: 250px;
+  max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.cell-desc {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .cell-author {
   font-weight: 500;
+  max-width: 100px;
 }
 
 .cell-duration {
@@ -375,4 +384,8 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+.text-center {
+  text-align: center !important;
 }

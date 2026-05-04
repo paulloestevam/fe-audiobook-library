@@ -149,6 +149,11 @@ const handleDeleteBook = async (bookId) => {
   closeMenu()
 }
 
+const formatDescription = (desc) => {
+  if (!desc) return '-'
+  return desc.length > 15 ? desc.substring(0, 15) + '...' : desc
+}
+
 </script>
 
 <template>
@@ -183,7 +188,11 @@ const handleDeleteBook = async (bookId) => {
             <th @click="sortBy('genre')" class="sortable">Gênero <span v-if="sortColumn === 'genre'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
             <th @click="sortBy('subGenre')" class="sortable">Sub-gênero <span v-if="sortColumn === 'subGenre'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
             <th @click="sortBy('duration')" class="sortable">Duração <span v-if="sortColumn === 'duration'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
-            <th @click="sortBy('restricted')" class="sortable">Restrição <span v-if="sortColumn === 'restricted'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+            <th @click="sortBy('rating')" class="sortable text-center">Nota <span v-if="sortColumn === 'rating'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+            <th @click="sortBy('reviewsCount')" class="sortable text-center">Av. <span v-if="sortColumn === 'reviewsCount'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+            <th @click="sortBy('description')" class="sortable">Desc. <span v-if="sortColumn === 'description'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+            <th @click="sortBy('urlAmazon')" class="sortable text-center">Link <span v-if="sortColumn === 'urlAmazon'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+            <th @click="sortBy('restricted')" class="sortable text-center">🔒 <span v-if="sortColumn === 'restricted'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
             <th class="actions-col"></th>
           </tr>
         </thead>
@@ -194,7 +203,14 @@ const handleDeleteBook = async (bookId) => {
             <td><span class="badge" :class="getGenreClass(book.genre)">{{ book.genre || 'N/A' }}</span></td>
             <td>{{ book.subGenre || '-' }}</td>
             <td class="cell-duration">{{ book.duration || '-' }}</td>
-            <td>
+            <td class="text-center">{{ book.rating || '-' }}</td>
+            <td class="text-center">{{ book.reviewsCount || '-' }}</td>
+            <td class="cell-desc" :title="book.description">{{ formatDescription(book.description) }}</td>
+            <td class="text-center">
+              <a v-if="book.urlAmazon" :href="book.urlAmazon" target="_blank" rel="noopener noreferrer" title="Ver na Amazon" style="text-decoration: none;">🛒</a>
+              <span v-else>-</span>
+            </td>
+            <td class="text-center">
               <span class="status-indicator" :class="book.restricted ? 'restricted' : 'free'">
                 {{ book.restricted ? 'Sim' : 'Não' }}
               </span>
