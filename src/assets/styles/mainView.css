@@ -372,9 +372,10 @@ h1 {
 .mode-list .section-title {
     grid-area: title;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: flex-start;
     padding: 0;
+    gap: 8px;
 }
 
 .mode-list .title {
@@ -382,6 +383,7 @@ h1 {
     font-weight: 500;
     color: #17659b;
     margin: 0;
+    margin-right: auto;
     height: auto;
     display: block;
     -webkit-line-clamp: unset;
@@ -587,4 +589,45 @@ h1 {
     .mode-compact {
         grid-template-columns: repeat(2, 1fr);
     }
+}
+
+a.rating-container {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+    transition: opacity 0.2s ease;
+}
+
+a.rating-container:hover {
+    opacity: 0.8;
+}
+
+.subgenre-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.subgenre-btn {
+    background: #f4f4f4;
+    border: none;
+    color: #777;
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.subgenre-btn:hover {
+    background: #e4e4e4;
+    color: #555;
+}
+
+.subgenre-btn.active {
+    background: #17659b;
+    color: white;
 }

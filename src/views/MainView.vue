@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { fetchBooksFromApi } from '../services/audiobookService'
 import { IMAGES_URL, DOWNLOADS_URL } from '../config'
 
@@ -9,6 +9,26 @@ const viewMode = ref('mode-compact')
 const searchQuery = ref('')
 const sortOption = ref('recent')
 const selectedGenre = ref('')
+const selectedSubGenre = ref('')
+
+const subGenres = computed(() => {
+  let relevantBooks = books.value
+  if (selectedGenre.value) {
+    relevantBooks = relevantBooks.filter(b => b.genre === selectedGenre.value)
+  }
+  
+  const subSet = new Set()
+  relevantBooks.forEach(b => {
+    if (b.subGenre && b.subGenre.trim()) {
+      subSet.add(b.subGenre.trim())
+    }
+  })
+  return Array.from(subSet).sort()
+})
+
+watch(selectedGenre, () => {
+  selectedSubGenre.value = ''
+})
 const activeBookId = ref(null)
 const isLoading = ref(true)
 const error = ref(null)
@@ -44,6 +64,10 @@ const filteredBooks = computed(() => {
 
   if (selectedGenre.value) {
     result = result.filter(b => b.genre === selectedGenre.value)
+  }
+
+  if (selectedSubGenre.value) {
+    result = result.filter(b => b.subGenre === selectedSubGenre.value)
   }
 
   if (searchQuery.value) {
@@ -145,6 +169,23 @@ const getDownloadUrl = (filename) => {
           </button>
         </div>
       </div>
+      
+      <div class="subgenre-filters" v-if="subGenres && subGenres.length > 0">
+        <button 
+          class="subgenre-btn"
+          :class="{ active: selectedSubGenre === '' }" 
+          @click="selectedSubGenre = ''">
+          Todos
+        </button>
+        <button 
+          v-for="sub in subGenres" 
+          :key="sub"
+          class="subgenre-btn"
+          :class="{ active: selectedSubGenre === sub }" 
+          @click="selectedSubGenre = sub">
+          {{ sub }}
+        </button>
+      </div>
     </div>
 
     <div v-if="isLoading" style="text-align: center; padding: 2rem;">
@@ -175,13 +216,25 @@ const getDownloadUrl = (filename) => {
 
         <div class="section-title">
           <span class="title" :title="book.title">{{ book.title }}</span>
-          <span v-if="book.genre" class="meta-tag">{{ book.genre }}</span>
+          <template v-if="viewMode === 'mode-list'">
+            <span v-if="book.subGenre" class="meta-tag">{{ book.subGenre }}</span>
+            <span v-if="book.genre" class="meta-tag">{{ book.genre }}</span>
+          </template>
+          <template v-else>
+            <span v-if="book.genre" class="meta-tag">{{ book.genre }}</span>
+            <span v-if="book.subGenre" class="meta-tag">{{ book.subGenre }}</span>
+          </template>
         </div>
 
         <div class="section-meta">
           <div class="author"><span class="author-label">De:</span> <span class="author-name">{{ book.author }}</span></div>
           <div class="duration-info" v-if="book.duration">Duração: {{ book.duration }}</div>
-          <div v-if="book.rating" class="rating-container">
+          <!-- <div class="subgenre-info" v-if="book.subGenre">Sub-gênero: {{ book.subGenre }}</div> -->
+          <a v-if="book.rating && book.urlAmazon" :href="book.urlAmazon" target="_blank" rel="noopener noreferrer" class="rating-container" @click.stop>
+            <span class="rating-stars"><span class="stars">★</span>{{ book.rating }} </span>
+            <span class="rating-count" v-if="book.reviewsCount">{{ book.reviewsCount }} avaliações</span>
+          </a>
+          <div v-else-if="book.rating" class="rating-container">
             <span class="rating-stars"><span class="stars">★</span>{{ book.rating }} </span>
             <span class="rating-count" v-if="book.reviewsCount">{{ book.reviewsCount }} avaliações</span>
           </div>
