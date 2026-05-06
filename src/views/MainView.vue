@@ -14,7 +14,11 @@ const selectedSubGenre = ref('')
 const subGenres = computed(() => {
   let relevantBooks = books.value
   if (selectedGenre.value) {
-    relevantBooks = relevantBooks.filter(b => b.genre === selectedGenre.value)
+    if (selectedGenre.value === 'Séries') {
+      relevantBooks = relevantBooks.filter(b => b.series)
+    } else {
+      relevantBooks = relevantBooks.filter(b => b.genre === selectedGenre.value)
+    }
   }
   
   const subSet = new Set()
@@ -63,7 +67,11 @@ const filteredBooks = computed(() => {
   let result = books.value
 
   if (selectedGenre.value) {
-    result = result.filter(b => b.genre === selectedGenre.value)
+    if (selectedGenre.value === 'Séries') {
+      result = result.filter(b => b.series)
+    } else {
+      result = result.filter(b => b.genre === selectedGenre.value)
+    }
   }
 
   if (selectedSubGenre.value) {
@@ -150,6 +158,7 @@ const getDownloadUrl = (filename) => {
           <button :class="{ active: selectedGenre === 'Ficção' }" @click="selectedGenre = 'Ficção'">Ficção</button>
           <button :class="{ active: selectedGenre === 'Não-ficção' }" @click="selectedGenre = 'Não-ficção'">Não-ficção</button>
           <button :class="{ active: selectedGenre === 'Literatura' }" @click="selectedGenre = 'Literatura'">Literatura</button>
+          <button :class="{ active: selectedGenre === 'Séries' }" @click="selectedGenre = 'Séries'">Séries</button>
         </div>
         <div class="btn-group">
           <button 

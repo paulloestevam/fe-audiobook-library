@@ -295,6 +295,7 @@ const handleUpload = async (files) => {
             <th @click="sortBy('dateAdded')" class="sortable">Data <span v-if="sortColumn === 'dateAdded'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
             <th @click="sortBy('genre')" class="sortable">Gênero <span v-if="sortColumn === 'genre'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
             <th @click="sortBy('subGenre')" class="sortable">Sub-gênero <span v-if="sortColumn === 'subGenre'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+            <th @click="sortBy('series')" class="sortable text-center" title="Série">📚 <span v-if="sortColumn === 'series'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
             <th @click="sortBy('duration')" class="sortable">Duração <span v-if="sortColumn === 'duration'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
             <th @click="sortBy('rating')" class="sortable text-center">Nota <span v-if="sortColumn === 'rating'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
             <th @click="sortBy('reviewsCount')" class="sortable text-center">Av. <span v-if="sortColumn === 'reviewsCount'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
@@ -311,6 +312,10 @@ const handleUpload = async (files) => {
             <td>{{ formatDate(book.dateAdded) }}</td>
             <td><span class="badge" :class="getGenreClass(book.genre)">{{ book.genre || 'N/A' }}</span></td>
             <td :title="book.subGenre">{{ formatSubGenre(book.subGenre) }}</td>
+            <td class="text-center">
+              <span v-if="book.series" title="Série">✔️</span>
+              <span v-else>-</span>
+            </td>
             <td class="cell-duration">{{ book.duration || '-' }}</td>
             <td class="text-center">{{ book.rating || '-' }}</td>
             <td class="text-center">{{ book.reviewsCount || '-' }}</td>
@@ -331,9 +336,7 @@ const handleUpload = async (files) => {
                 </button>
                 
                 <div v-if="activeMenuId === book.id" class="dropdown-menu">
-                  <button class="dropdown-item" @click="handleEditBook(book.id)">
-                    Editar
-                  </button>
+                  
                   <button class="dropdown-item" @click="handleToggleRestriction(book.id)">
                     Alternar Restrição
                   </button>
@@ -350,6 +353,9 @@ const handleUpload = async (files) => {
                   </div>
                   
                   <div class="dropdown-divider"></div>
+                  <button class="dropdown-item" @click="handleEditBook(book.id)">
+                    Editar
+                  </button>
                   <button class="dropdown-item text-danger" @click="handleDeleteBook(book.id)">
                     Excluir
                   </button>

@@ -20,7 +20,8 @@ const book = ref({
   reviewsCount: null,
   description: '',
   urlAmazon: '',
-  restricted: false
+  restricted: false,
+  series: false
 })
 
 onMounted(async () => {
@@ -35,7 +36,8 @@ onMounted(async () => {
       reviewsCount: data.reviewsCount || null,
       description: data.description || '',
       urlAmazon: data.urlAmazon || '',
-      restricted: data.restricted || false
+      restricted: data.restricted || false,
+      series: data.series || false
     }
   } catch (err) {
     console.error('Erro ao carregar livro:', err)
@@ -137,6 +139,13 @@ const handleCancel = () => {
           <label class="checkbox-label">
             <input type="checkbox" v-model="book.restricted" />
             Restringir acesso (🔒)
+          </label>
+        </div>
+
+        <div class="form-group checkbox-group full-width">
+          <label class="checkbox-label">
+            <input type="checkbox" v-model="book.series" />
+            Série (Faz parte de uma coleção)
           </label>
         </div>
 
