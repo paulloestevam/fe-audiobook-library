@@ -1,6 +1,9 @@
 <script setup>
 import { ref, onMounted, computed, onUnmounted } from 'vue'
-import { fetchBooksFromApi, toggleBookRestriction, updateBookGenre, deleteBook } from '../services/audiobookService'
+import { useRouter } from 'vue-router'
+import { fetchBooksFromApi, toggleBookRestriction, updateBookGenre, deleteBook, uploadZips } from '../services/audiobookService'
+
+const router = useRouter()
 
 const books = ref([])
 const sortColumn = ref('dateAdded')
@@ -10,6 +13,11 @@ const error = ref(null)
 
 const activeMenuId = ref(null)
 const activeSubMenuId = ref(null)
+
+const isDragging = ref(false)
+const isUploading = ref(false)
+const uploadMessage = ref('')
+const fileInput = ref(null)
 
 const fetchBooks = async () => {
   try {
@@ -136,6 +144,10 @@ const handleUpdateGenre = async (bookId, genre) => {
   closeMenu()
 }
 
+const handleEditBook = (bookId) => {
+  router.push(`/admin/edit/${bookId}`)
+}
+
 const handleDeleteBook = async (bookId) => {
   if (confirm('Tem certeza que deseja excluir este livro?')) {
     try {
@@ -154,6 +166,81 @@ const formatDescription = (desc) => {
   return desc.length > 15 ? desc.substring(0, 15) + '...' : desc
 }
 
+const formatDate = (dateString) => {
+  if (!dateString) return '-'
+  const date = new Date(dateString)
+  if (isNaN(date)) return '-'
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const year = String(date.getFullYear()).slice(-2)
+  return `${day}/${month}/${year}`
+}
+
+const formatSubGenre = (subGenre) => {
+  if (!subGenre) return '-'
+  return subGenre.length > 30 ? subGenre.substring(0, 30) + '...' : subGenre
+}
+
+const onDragOver = (e) => {
+  e.preventDefault()
+  isDragging.value = true
+}
+
+const onDragLeave = (e) => {
+  e.preventDefault()
+  isDragging.value = false
+}
+
+const onDrop = async (e) => {
+  e.preventDefault()
+  isDragging.value = false
+  const files = e.dataTransfer.files
+  if (files.length > 0) {
+    await handleUpload(files)
+  }
+}
+
+const onFileSelected = async (e) => {
+  const files = e.target.files
+  if (files.length > 0) {
+    await handleUpload(files)
+  }
+}
+
+const triggerFileInput = () => {
+  if (fileInput.value) {
+    fileInput.value.click()
+  }
+}
+
+const handleUpload = async (files) => {
+  const validFiles = Array.from(files).filter(f => f.name.endsWith('.zip'))
+  if (validFiles.length === 0) {
+    uploadMessage.value = 'Por favor, selecione apenas arquivos .zip'
+    return
+  }
+
+  isUploading.value = true
+  uploadMessage.value = 'Fazendo upload...'
+
+  try {
+    const responseMsg = await uploadZips(validFiles)
+    uploadMessage.value = responseMsg || 'Upload concluído com sucesso!'
+    await fetchBooks() // Refresh table
+  } catch (err) {
+    console.error('Erro no upload:', err)
+    uploadMessage.value = 'Erro ao fazer upload dos arquivos.'
+  } finally {
+    isUploading.value = false
+    setTimeout(() => {
+      uploadMessage.value = ''
+    }, 5000)
+    if (fileInput.value) {
+       fileInput.value.value = ''
+    }
+  }
+}
+
 </script>
 
 <template>
@@ -162,11 +249,31 @@ const formatDescription = (desc) => {
       <div class="header-top">
         <div class="header-title">
           <h1>⚙️ Painel de Administração</h1>
-          <span class="book-count">Total de livros: {{ books.length }}</span>
+          <span class="book-count">Livros: {{ books.length }}</span>
         </div>
         <router-link to="/" class="nav-link">
           📚 Voltar para Biblioteca
         </router-link>
+      </div>
+    </div>
+
+    <div class="upload-panel"
+         @dragover="onDragOver"
+         @dragleave="onDragLeave"
+         @drop="onDrop"
+         @click="triggerFileInput"
+         :class="{ 'is-dragging': isDragging }">
+      <input type="file" ref="fileInput" multiple accept=".zip" @change="onFileSelected" style="display: none;" />
+      
+      <div class="upload-content">
+        <div class="upload-icon">📁</div>
+        <h3>Upload de novos Audiobooks</h3>
+        <p>Arraste e solte arquivos .zip aqui ou clique para selecionar</p>
+      </div>
+
+      <div v-if="isUploading || uploadMessage" class="upload-status" :class="{ 'is-error': uploadMessage.includes('Erro') || uploadMessage.includes('apenas arquivos') }">
+        <div v-if="isUploading" class="spinner-small"></div>
+        <span>{{ uploadMessage }}</span>
       </div>
     </div>
 
@@ -185,6 +292,7 @@ const formatDescription = (desc) => {
           <tr>
             <th @click="sortBy('title')" class="sortable">Título <span v-if="sortColumn === 'title'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
             <th @click="sortBy('author')" class="sortable">Autor <span v-if="sortColumn === 'author'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+            <th @click="sortBy('dateAdded')" class="sortable">Data <span v-if="sortColumn === 'dateAdded'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
             <th @click="sortBy('genre')" class="sortable">Gênero <span v-if="sortColumn === 'genre'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
             <th @click="sortBy('subGenre')" class="sortable">Sub-gênero <span v-if="sortColumn === 'subGenre'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
             <th @click="sortBy('duration')" class="sortable">Duração <span v-if="sortColumn === 'duration'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
@@ -200,8 +308,9 @@ const formatDescription = (desc) => {
           <tr v-for="book in sortedBooks" :key="book.id">
             <td class="cell-title" :title="book.title">{{ book.title }}</td>
             <td class="cell-author">{{ book.author }}</td>
+            <td>{{ formatDate(book.dateAdded) }}</td>
             <td><span class="badge" :class="getGenreClass(book.genre)">{{ book.genre || 'N/A' }}</span></td>
-            <td>{{ book.subGenre || '-' }}</td>
+            <td :title="book.subGenre">{{ formatSubGenre(book.subGenre) }}</td>
             <td class="cell-duration">{{ book.duration || '-' }}</td>
             <td class="text-center">{{ book.rating || '-' }}</td>
             <td class="text-center">{{ book.reviewsCount || '-' }}</td>
@@ -222,6 +331,9 @@ const formatDescription = (desc) => {
                 </button>
                 
                 <div v-if="activeMenuId === book.id" class="dropdown-menu">
+                  <button class="dropdown-item" @click="handleEditBook(book.id)">
+                    Editar
+                  </button>
                   <button class="dropdown-item" @click="handleToggleRestriction(book.id)">
                     Alternar Restrição
                   </button>

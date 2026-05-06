@@ -108,9 +108,9 @@
 
 .admin-table th {
   background: #f8f9fa;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 0.5rem;
   text-align: left;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #6c757d;
@@ -131,11 +131,11 @@
 
 
 .admin-table td {
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 0.5rem;
   vertical-align: middle;
   border-bottom: 1px solid #e9ecef;
   color: #495057;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
 }
 
 .admin-table tr:hover {
@@ -149,7 +149,8 @@
 .cell-title {
   font-weight: 600;
   color: #212529;
-  max-width: 180px;
+  max-width: 350px;
+  width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -163,7 +164,10 @@
 
 .cell-author {
   font-weight: 500;
-  max-width: 100px;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .cell-duration {
@@ -388,4 +392,77 @@
 
 .text-center {
   text-align: center !important;
+}
+
+/* Upload Panel */
+.upload-panel {
+  background: white;
+  border-radius: 12px;
+  border: 2px dashed #cbd5e1;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.upload-panel:hover {
+  border-color: #3b82f6;
+  background-color: #f8fafc;
+}
+
+.upload-panel.is-dragging {
+  border-color: #2563eb;
+  background-color: #eff6ff;
+  transform: scale(1.02);
+}
+
+.upload-content {
+  pointer-events: none;
+}
+
+.upload-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.upload-panel h3 {
+  margin: 0 0 0.5rem 0;
+  color: #1e293b;
+  font-size: 1.2rem;
+}
+
+.upload-panel p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.upload-status {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background-color: #f0fdf4;
+  color: #15803d;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.upload-status.is-error {
+  background-color: #fef2f2;
+  color: #b91c1c;
+}
+
+.spinner-small {
+  width: 20px;
+  height: 20px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }

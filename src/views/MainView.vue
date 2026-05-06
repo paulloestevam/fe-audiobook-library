@@ -117,7 +117,7 @@ const getDownloadUrl = (filename) => {
       <div class="header-top">
         <div class="header-title">
           <h1>📚 Biblioteca</h1>
-          <span class="book-count">Total de livros: {{ filteredBooks.length }}</span>
+          <span class="book-count">Livros: {{ filteredBooks.length }}</span>
         </div>
         <div class="header-links">
           <router-link to="/admin" class="admin-link">
@@ -153,19 +153,22 @@ const getDownloadUrl = (filename) => {
         </div>
         <div class="btn-group">
           <button 
-            :class="{ active: viewMode === 'mode-grid' }" 
-            @click="viewMode = 'mode-grid'">
-            Blocos
+            :class="['btn-icon', { active: viewMode === 'mode-grid' }]" 
+            @click="viewMode = 'mode-grid'"
+            title="Blocos">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zm0 9h7v7h-7v-7zM4 13h7v7H4v-7z"/></svg>
           </button>
           <button 
-            :class="{ active: viewMode === 'mode-compact' }" 
-            @click="viewMode = 'mode-compact'">
-            Compacto
+            :class="['btn-icon', { active: viewMode === 'mode-compact' }]" 
+            @click="viewMode = 'mode-compact'"
+            title="Compacto">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z"/></svg>
           </button>
           <button 
-            :class="{ active: viewMode === 'mode-list' }" 
-            @click="viewMode = 'mode-list'">
-            Lista
+            :class="['btn-icon', { active: viewMode === 'mode-list' }]" 
+            @click="viewMode = 'mode-list'"
+            title="Lista">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M4 6h2v2H4V6zm0 5h2v2H4v-2zm0 5h2v2H4v-2zm4-10h12v2H8V6zm0 5h12v2H8v-2zm0 5h12v2H8v-2z"/></svg>
           </button>
         </div>
       </div>
@@ -221,22 +224,23 @@ const getDownloadUrl = (filename) => {
             <span v-if="book.genre" class="meta-tag">{{ book.genre }}</span>
           </template>
           <template v-else>
-            <span v-if="book.genre" class="meta-tag">{{ book.genre }}</span>
-            <span v-if="book.subGenre" class="meta-tag">{{ book.subGenre }}</span>
+            <span v-if="book.genre || book.subGenre" class="meta-tag">
+              {{ book.genre && book.subGenre ? book.genre + ' - ' + book.subGenre : (book.genre || book.subGenre) }}
+            </span>
           </template>
         </div>
 
         <div class="section-meta">
           <div class="author"><span class="author-label">De:</span> <span class="author-name">{{ book.author }}</span></div>
-          <div class="duration-info" v-if="book.duration">Duração: {{ book.duration }}</div>
-          <!-- <div class="subgenre-info" v-if="book.subGenre">Sub-gênero: {{ book.subGenre }}</div> -->
-          <a v-if="book.rating && book.urlAmazon" :href="book.urlAmazon" target="_blank" rel="noopener noreferrer" class="rating-container" @click.stop>
-            <span class="rating-stars"><span class="stars">★</span>{{ book.rating }} </span>
-            <span class="rating-count" v-if="book.reviewsCount">{{ book.reviewsCount }} avaliações</span>
-          </a>
-          <div v-else-if="book.rating" class="rating-container">
-            <span class="rating-stars"><span class="stars">★</span>{{ book.rating }} </span>
-            <span class="rating-count" v-if="book.reviewsCount">{{ book.reviewsCount }} avaliações</span>
+          <div class="meta-stats">
+            <span v-if="book.duration">{{ book.duration }}</span>
+            <span v-if="book.duration && book.rating"> / </span>
+            <a v-if="book.rating && book.urlAmazon" :href="book.urlAmazon" target="_blank" rel="noopener noreferrer" class="rating-inline" @click.stop>
+              <span class="stars">★</span> {{ book.rating }}<template v-if="book.reviewsCount"> / {{ book.reviewsCount }} avaliações</template>
+            </a>
+            <span v-else-if="book.rating" class="rating-inline">
+              <span class="stars">★</span> {{ book.rating }}<template v-if="book.reviewsCount"> / {{ book.reviewsCount }} avaliações</template>
+            </span>
           </div>
         </div>
 

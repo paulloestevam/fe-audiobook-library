@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import MainView from '../views/MainView.vue'
 import AdminView from '../views/AdminView.vue'
+import EditView from '../views/EditView.vue'
 
 const routes = [
   {
@@ -12,6 +13,11 @@ const routes = [
     path: '/admin',
     name: 'Admin',
     component: AdminView
+  },
+  {
+    path: '/admin/edit/:id',
+    name: 'EditBook',
+    component: EditView
   }
 ]
 
