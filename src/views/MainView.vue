@@ -10,6 +10,7 @@ const searchQuery = ref('')
 const sortOption = ref('recent')
 const selectedGenre = ref('')
 const selectedSubGenre = ref('')
+const isSubgenresExpanded = ref(false)
 
 const subGenres = computed(() => {
   let relevantBooks = books.value
@@ -182,21 +183,27 @@ const getDownloadUrl = (filename) => {
         </div>
       </div>
       
-      <div class="subgenre-filters" v-if="subGenres && subGenres.length > 0">
-        <button 
-          class="subgenre-btn"
-          :class="{ active: selectedSubGenre === '' }" 
-          @click="selectedSubGenre = ''">
-          Todos
+      <div class="subgenre-container" v-if="subGenres && subGenres.length > 0">
+        <button class="subgenre-toggle" @click="isSubgenresExpanded = !isSubgenresExpanded">
+          <span class="toggle-text">Sub-gêneros {{ selectedSubGenre ? `(${selectedSubGenre})` : '' }}</span>
+          <span class="toggle-icon">{{ isSubgenresExpanded ? '▲' : '▼' }}</span>
         </button>
-        <button 
-          v-for="sub in subGenres" 
-          :key="sub"
-          class="subgenre-btn"
-          :class="{ active: selectedSubGenre === sub }" 
-          @click="selectedSubGenre = sub">
-          {{ sub }}
-        </button>
+        <div class="subgenre-filters" v-show="isSubgenresExpanded">
+          <button 
+            class="subgenre-btn"
+            :class="{ active: selectedSubGenre === '' }" 
+            @click="selectedSubGenre = ''">
+            Todos
+          </button>
+          <button 
+            v-for="sub in subGenres" 
+            :key="sub"
+            class="subgenre-btn"
+            :class="{ active: selectedSubGenre === sub }" 
+            @click="selectedSubGenre = sub">
+            {{ sub }}
+          </button>
+        </div>
       </div>
     </div>
 
