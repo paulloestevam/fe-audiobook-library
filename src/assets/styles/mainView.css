@@ -590,41 +590,50 @@ h1 {
 }
 
 /* Global Utilities */
-.btn-download {
+.btn-favorite {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 0px;
+    right: 0px;
     width: 36px;
     height: 36px;
-    background: rgba(255, 255, 255, 0.95);
+    background: none;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    color: #333;
-    opacity: 1;
-    transition: opacity 0.2s;
+    color: #eeeded;
+    border: none;
+    opacity: 0.3;
+    transition: all 0.2s;
     z-index: 60;
-    text-decoration: none;
+    cursor: pointer;
+    /* Adicionando um leve drop-shadow no ícone garante que ele não suma em capas brancas */
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
 }
 
-.mode-list .btn-download {
+.mode-list .btn-favorite {
+    display: none;
+}
+
+.btn-favorite svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+}
+
+.btn-favorite.is-favorite {
+    color: var(--accent);
     opacity: 1;
-    top: 10px;
-    right: 10px;
-    width: 32px;
-    height: 32px;
-    background: rgba(255, 255, 255, 0.9);
 }
 
-.btn-download svg {
-    width: 18px;
-    height: 18px;
+.btn-favorite.is-favorite svg {
     fill: currentColor;
 }
 
-.btn-download:hover {
+.btn-favorite:hover {
+    opacity: 1;
     transform: scale(1.1);
 }
 
@@ -776,7 +785,7 @@ a.rating-container:hover {
 }
 
 .mode-compact .meta-stats {
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     margin-top: 3px;
 }
 
@@ -784,4 +793,114 @@ a.rating-container:hover {
     font-size: 0.95rem;
     color: #333;
     margin-top: 4px;
+}
+
+.meta-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0px;
+}
+
+.btn-download-inline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    color: var(--accent);
+    background: #f0f0f0;
+    border-radius: 50%;
+    transition: 0.2s;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.btn-download-inline:hover {
+    background: #e0e0e0;
+    transform: scale(1.1);
+}
+
+.btn-download-inline svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+}
+
+.mode-list .btn-download-inline {
+    width: 32px;
+    height: 32px;
+}
+
+.mode-list .btn-download-inline svg {
+    width: 18px;
+    height: 18px;
+}
+
+.mode-compact .btn-download-inline {
+    width: 22px;
+    height: 22px;
+}
+
+.mode-compact .btn-download-inline svg {
+    width: 12px;
+    height: 12px;
+}
+
+.meta-actions {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.mode-compact .meta-actions {
+    bottom: 8px;
+    right: 8px;
+}
+
+.mode-list .meta-actions {
+    bottom: 20px;
+    right: 20px;
+}
+
+.btn-favorite-inline {
+    display: none;
+}
+
+.mode-list .btn-favorite-inline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    color: #ccc;
+    background: transparent;
+    border-radius: 50%;
+    transition: 0.2s;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.mode-list .btn-favorite-inline:hover {
+    background: #e0e0e0;
+    color: #999;
+}
+
+.mode-list .btn-favorite-inline svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+}
+
+.mode-list .btn-favorite-inline.is-favorite {
+    color: var(--accent);
+}
+
+.mode-list .btn-favorite-inline.is-favorite svg {
+    fill: currentColor;
 }

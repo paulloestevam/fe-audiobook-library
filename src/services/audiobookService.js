@@ -92,3 +92,24 @@ export const uploadZips = async (files) => {
   }
   return await response.text()
 }
+
+export const toggleFavoriteBook = async (id) => {
+  const response = await fetch(`${API_URL}/users/favorites/${id}`, {
+    method: 'PATCH',
+    headers: getAuthHeaders()
+  })
+  if (!response.ok) {
+    throw new Error(`Erro HTTP: ${response.status}`)
+  }
+  return await response.json()
+}
+
+export const fetchUserFavorites = async () => {
+  const response = await fetch(`${API_URL}/users/favorites`, {
+    headers: getAuthHeaders()
+  })
+  if (!response.ok) {
+    return []
+  }
+  return await response.json()
+}

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
-import { fetchBooksFromApi } from '../services/audiobookService'
+import { fetchBooksFromApi, toggleFavoriteBook, fetchUserFavorites } from '../services/audiobookService'
 import { IMAGES_URL, DOWNLOADS_URL } from '../config'
 
 
@@ -11,12 +11,15 @@ const sortOption = ref('recent')
 const selectedGenre = ref('')
 const selectedSubGenre = ref('')
 const isSubgenresExpanded = ref(false)
+const userFavorites = ref([])
 
 const subGenres = computed(() => {
   let relevantBooks = books.value
   if (selectedGenre.value) {
     if (selectedGenre.value === 'Séries') {
       relevantBooks = relevantBooks.filter(b => b.series)
+    } else if (selectedGenre.value === 'Favoritos') {
+      relevantBooks = relevantBooks.filter(b => userFavorites.value.includes(b.id))
     } else {
       relevantBooks = relevantBooks.filter(b => b.genre === selectedGenre.value)
     }
@@ -75,7 +78,7 @@ const fetchBooks = async () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   const token = localStorage.getItem('auth_token')
   isLoggedIn.value = !!token
   if (token) {
@@ -83,9 +86,23 @@ onMounted(() => {
     if (payload && payload.picture) {
       userPicture.value = payload.picture
     }
+    try {
+      userFavorites.value = await fetchUserFavorites()
+    } catch (e) {
+      console.error('Erro ao buscar favoritos', e)
+    }
   }
   fetchBooks()
 })
+
+const handleToggleFavorite = async (bookId) => {
+  if (!isLoggedIn.value) return
+  try {
+    userFavorites.value = await toggleFavoriteBook(bookId)
+  } catch (err) {
+    console.error('Erro ao favoritar:', err)
+  }
+}
 
 const handleLogout = () => {
   localStorage.removeItem('auth_token')
@@ -100,6 +117,8 @@ const filteredBooks = computed(() => {
   if (selectedGenre.value) {
     if (selectedGenre.value === 'Séries') {
       result = result.filter(b => b.series)
+    } else if (selectedGenre.value === 'Favoritos') {
+      result = result.filter(b => userFavorites.value.includes(b.id))
     } else {
       result = result.filter(b => b.genre === selectedGenre.value)
     }
@@ -175,7 +194,7 @@ const getDownloadUrl = (filename) => {
             </svg>
           </a>
 
-                    <router-link v-if="isLoggedIn" to="/admin" class="admin-link">
+          <router-link v-if="isLoggedIn" to="/admin" class="admin-link">
             ⚙️
           </router-link>
 
@@ -208,6 +227,7 @@ const getDownloadUrl = (filename) => {
 
         <div class="genre-filters btn-group">
           <button :class="{ active: selectedGenre === '' }" @click="selectedGenre = ''">Todos</button>
+          <button v-if="isLoggedIn" :class="{ active: selectedGenre === 'Favoritos' }" @click="selectedGenre = 'Favoritos'">Favoritos</button>
           <button :class="{ active: selectedGenre === 'Ficção' }" @click="selectedGenre = 'Ficção'">Ficção</button>
           <button :class="{ active: selectedGenre === 'Não-ficção' }" @click="selectedGenre = 'Não-ficção'">Não-ficção</button>
           <button :class="{ active: selectedGenre === 'Literatura' }" @click="selectedGenre = 'Literatura'">Literatura</button>
@@ -280,9 +300,9 @@ const getDownloadUrl = (filename) => {
           <img :src="getImageUrl(book.imageFilename)" class="cover-bg-blur" alt="" />
           <img :src="getImageUrl(book.imageFilename)" class="cover-img" :alt="book.title" />
           
-          <a v-if="book.zipFilename" :href="getDownloadUrl(book.zipFilename)" @click.stop class="btn-download" title="Baixar Audiobook" download>
-            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-          </a>
+          <button v-if="isLoggedIn" @click.stop="handleToggleFavorite(book.id)" class="btn-favorite" :class="{ 'is-favorite': userFavorites.includes(book.id) }" title="Favoritar">
+            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          </button>
         </div>
 
         <div class="section-title">
@@ -300,15 +320,25 @@ const getDownloadUrl = (filename) => {
 
         <div class="section-meta">
           <div class="author"><span class="author-label">De:</span> <span class="author-name">{{ book.author }}</span></div>
-          <div class="meta-stats">
-            <span v-if="book.duration">{{ book.duration }}</span>
-            <span v-if="book.duration && book.rating"> / </span>
-            <a v-if="book.rating && book.urlAmazon" :href="book.urlAmazon" target="_blank" rel="noopener noreferrer" class="rating-inline" @click.stop>
-              <span class="stars">★</span> {{ book.rating }}<template v-if="book.reviewsCount"> / {{ book.reviewsCount }} avaliações</template>
-            </a>
-            <span v-else-if="book.rating" class="rating-inline">
-              <span class="stars">★</span> {{ book.rating }}<template v-if="book.reviewsCount"> / {{ book.reviewsCount }} avaliações</template>
-            </span>
+          <div class="meta-bottom">
+            <div class="meta-stats">
+              <span v-if="book.duration">{{ book.duration }}</span>
+              <span v-if="book.duration && book.rating"> / </span>
+              <a v-if="book.rating && book.urlAmazon" :href="book.urlAmazon" target="_blank" rel="noopener noreferrer" class="rating-inline" @click.stop>
+                <span class="stars">★</span> {{ book.rating }}<template v-if="book.reviewsCount"> / {{ book.reviewsCount }} avaliações</template>
+              </a>
+              <span v-else-if="book.rating" class="rating-inline">
+                <span class="stars">★</span> {{ book.rating }}<template v-if="book.reviewsCount"> / {{ book.reviewsCount }} avaliações</template>
+              </span>
+            </div>
+            <div class="meta-actions">
+              <button v-if="isLoggedIn" @click.stop="handleToggleFavorite(book.id)" class="btn-favorite-inline" :class="{ 'is-favorite': userFavorites.includes(book.id) }" title="Favoritar">
+                <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              </button>
+              <a v-if="book.zipFilename" :href="getDownloadUrl(book.zipFilename)" @click.stop class="btn-download-inline" title="Baixar Audiobook" download>
+                <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+              </a>
+            </div>
           </div>
         </div>
 
