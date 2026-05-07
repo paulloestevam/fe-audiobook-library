@@ -458,6 +458,7 @@ h1 {
     column-gap: 25px;
     row-gap: 8px;
     align-items: start;
+    position: relative;
 }
 
 .mode-list .cover-wrapper {
