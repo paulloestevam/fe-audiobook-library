@@ -51,14 +51,15 @@ h1 {
 }
 
 .admin-link,
+.restricted-link,
 .login-link,
 .logout-link {
     font-size: 0.85rem;
     color: #333;
     text-decoration: none;
     font-weight: bold;
-    padding: 6px 12px;
-    /* background-color: #f0f0f0; */
+    padding: 6px 6px;
+    background-color: transparent;
     border-radius: 6px;
     transition: 0.2s;
     display: flex;
@@ -69,9 +70,16 @@ h1 {
 }
 
 .admin-link:hover,
+.restricted-link:hover,
+.restricted-link.active,
 .login-link:hover,
 .logout-link:hover {
     background-color: var(--accent);
+    color: white;
+}
+
+.restricted-link.pending {
+    background-color: #f39c12; /* Laranja para indicar aviso/pendência */
     color: white;
 }
 
@@ -400,7 +408,7 @@ h1 {
 
 .mode-compact .title {
     font-size: 0.85rem;
-    height: 2.4rem;
+    height: 3.0rem;
     line-height: 1.2;
     margin-bottom: 2px;
 }

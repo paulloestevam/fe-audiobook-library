@@ -18,6 +18,26 @@ export const fetchBooksFromApi = async () => {
   return await response.json()
 }
 
+export const fetchRestrictedBooksFromApi = async () => {
+  const response = await fetch(`${API_URL}/books-restricted`, {
+    headers: getAuthHeaders()
+  })
+  if (!response.ok) {
+    throw new Error(`Erro HTTP: ${response.status}`)
+  }
+  return await response.json()
+}
+
+export const fetchBooksAllFromApi = async () => {
+  const response = await fetch(`${API_URL}/books-all`, {
+    headers: getAuthHeaders()
+  })
+  if (!response.ok) {
+    throw new Error(`Erro HTTP: ${response.status}`)
+  }
+  return await response.json()
+}
+
 export const fetchBookById = async (id) => {
   const response = await fetch(`${API_URL}/books/${id}`, {
     headers: getAuthHeaders()
@@ -110,6 +130,38 @@ export const fetchUserFavorites = async () => {
   })
   if (!response.ok) {
     return []
+  }
+  return await response.json()
+}
+
+export const fetchAllUsers = async () => {
+  const response = await fetch(`${API_URL}/users`, {
+    headers: getAuthHeaders()
+  })
+  if (!response.ok) {
+    throw new Error(`Erro HTTP: ${response.status}`)
+  }
+  return await response.json()
+}
+
+export const toggleUserAdmin = async (id) => {
+  const response = await fetch(`${API_URL}/users/${id}/toggle-admin`, {
+    method: 'PATCH',
+    headers: getAuthHeaders()
+  })
+  if (!response.ok) {
+    throw new Error(`Erro HTTP: ${response.status}`)
+  }
+  return await response.json()
+}
+
+export const toggleUserRestrictedContent = async (id) => {
+  const response = await fetch(`${API_URL}/users/${id}/toggle-restricted`, {
+    method: 'PATCH',
+    headers: getAuthHeaders()
+  })
+  if (!response.ok) {
+    throw new Error(`Erro HTTP: ${response.status}`)
   }
   return await response.json()
 }

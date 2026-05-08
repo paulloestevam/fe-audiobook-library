@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
-import { fetchBooksFromApi, toggleFavoriteBook, fetchUserFavorites } from '../services/audiobookService'
-import { IMAGES_URL, DOWNLOADS_URL } from '../config'
+import { fetchBooksFromApi, toggleFavoriteBook, fetchUserFavorites, fetchRestrictedBooksFromApi } from '../services/audiobookService'
+import { IMAGES_URL, DOWNLOADS_URL, API_URL } from '../config'
 
 
 const books = ref([])
@@ -12,6 +12,11 @@ const selectedGenre = ref('')
 const selectedSubGenre = ref('')
 const isSubgenresExpanded = ref(false)
 const userFavorites = ref([])
+const canAccessRestrictedContent = ref(false)
+const showRestrictedOnly = ref(false)
+const awaitingSecondClick = ref(false)
+let clickTimer = null
+const isAdmin = ref(false)
 
 const subGenres = computed(() => {
   let relevantBooks = books.value
@@ -78,13 +83,58 @@ const fetchBooks = async () => {
   }
 }
 
+const toggleRestrictedFilter = async () => {
+  if (showRestrictedOnly.value) {
+    // Para fechar: apenas 1 clique
+    showRestrictedOnly.value = false
+    isLoading.value = true
+    try {
+      books.value = await fetchBooksFromApi()
+    } catch (err) {
+      console.error('Erro ao buscar livros:', err)
+    } finally {
+      isLoading.value = false
+    }
+  } else {
+    // Para abrir: precisa de 2 cliques
+    if (awaitingSecondClick.value) {
+      // Recebeu o segundo clique
+      awaitingSecondClick.value = false
+      clearTimeout(clickTimer)
+      showRestrictedOnly.value = true
+      isLoading.value = true
+      try {
+        books.value = await fetchRestrictedBooksFromApi()
+      } catch (err) {
+        console.error('Erro ao buscar livros:', err)
+      } finally {
+        isLoading.value = false
+      }
+    } else {
+      // Primeiro clique
+      awaitingSecondClick.value = true
+      clickTimer = setTimeout(() => {
+        awaitingSecondClick.value = false
+      }, 150) // 1.5 segundos para dar o segundo clique
+    }
+  }
+}
+
 onMounted(async () => {
   const token = localStorage.getItem('auth_token')
   isLoggedIn.value = !!token
   if (token) {
     const payload = parseJwt(token)
-    if (payload && payload.picture) {
-      userPicture.value = payload.picture
+    if (payload) {
+      if (payload.picture) {
+        userPicture.value = payload.picture
+      }
+      if (payload.canAccessRestrictedContent === true) {
+        canAccessRestrictedContent.value = true
+      }
+      if (payload.admin === true) {
+        isAdmin.value = true
+      }
     }
     try {
       userFavorites.value = await fetchUserFavorites()
@@ -109,6 +159,7 @@ const handleLogout = () => {
   isLoggedIn.value = false
   userPicture.value = null
   showUserMenu.value = false
+  window.location.reload()
 }
 
 const filteredBooks = computed(() => {
@@ -184,7 +235,7 @@ const getDownloadUrl = (filename) => {
             📱 Baixar App Player
           </a>
 
-          <a v-if="!isLoggedIn" href="http://localhost:8080/oauth2/authorization/google" class="google-login-btn" title="Entrar com o Google">
+          <a v-if="!isLoggedIn" :href="`${API_URL}/oauth2/authorization/google`" class="google-login-btn" title="Entrar com o Google">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px">
               <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.7 17.74 9.5 24 9.5z"/>
               <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
@@ -194,12 +245,19 @@ const getDownloadUrl = (filename) => {
             </svg>
           </a>
 
-          <router-link v-if="isLoggedIn" to="/admin" class="admin-link">
+          <router-link v-if="isAdmin" to="/admin" class="admin-link">
             ⚙️
           </router-link>
 
+          <button v-if="canAccessRestrictedContent" 
+                  :class="['restricted-link', { active: showRestrictedOnly, 'pending': awaitingSecondClick }]" 
+                  @click="toggleRestrictedFilter" 
+                  :title="showRestrictedOnly ? 'Ocultar Restritos' : 'Mostrar Restritos'">
+            {{ showRestrictedOnly ? '🔓' : '🔒' }}
+          </button>
+
           <div v-if="isLoggedIn" class="user-menu-container">
-            <img v-if="userPicture" :src="userPicture" alt="Usuário" class="user-avatar" @click="toggleUserMenu" />
+            <img v-if="userPicture" :src="userPicture" alt="Usuário" class="user-avatar" @click="toggleUserMenu" referrerpolicy="no-referrer" />
             <div v-else class="user-avatar-placeholder" @click="toggleUserMenu">👤</div>
             
             <div v-if="showUserMenu" class="user-dropdown">

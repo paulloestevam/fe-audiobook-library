@@ -3,6 +3,7 @@ import MainView from '../views/MainView.vue'
 import AdminView from '../views/AdminView.vue'
 import EditView from '../views/EditView.vue'
 import LoginSuccessView from '../views/LoginSuccessView.vue'
+import UserConfigView from '../views/UserConfigView.vue'
 
 const routes = [
   {
@@ -20,6 +21,12 @@ const routes = [
     path: '/admin/edit/:id',
     name: 'EditBook',
     component: EditView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin/users',
+    name: 'UserConfig',
+    component: UserConfigView,
     meta: { requiresAuth: true }
   },
   {

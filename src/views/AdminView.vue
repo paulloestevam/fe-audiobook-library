@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { fetchBooksFromApi, toggleBookRestriction, updateBookGenre, deleteBook, uploadZips } from '../services/audiobookService'
+import { fetchBooksAllFromApi, toggleBookRestriction, updateBookGenre, deleteBook, uploadZips } from '../services/audiobookService'
 
 const router = useRouter()
 
@@ -22,7 +22,7 @@ const fileInput = ref(null)
 const fetchBooks = async () => {
   try {
     isLoading.value = true
-    books.value = await fetchBooksFromApi()
+    books.value = await fetchBooksAllFromApi()
   } catch (err) {
     console.error('Erro ao buscar livros:', err)
     error.value = 'Falha ao carregar os livros. Verifique se o backend está rodando e se o CORS está liberado.'
@@ -251,9 +251,14 @@ const handleUpload = async (files) => {
           <h1>⚙️ Painel de Administração</h1>
           <span class="book-count">Livros: {{ books.length }}</span>
         </div>
-        <router-link to="/" class="nav-link">
-          📚 Voltar para Biblioteca
-        </router-link>
+        <div class="header-actions" style="display: flex; gap: 15px; align-items: center;">
+          <router-link to="/admin/users" class="nav-link">
+            👥 Configurações de Usuários
+          </router-link>
+          <router-link to="/" class="nav-link">
+            📚 Voltar para Biblioteca
+          </router-link>
+        </div>
       </div>
     </div>
 
