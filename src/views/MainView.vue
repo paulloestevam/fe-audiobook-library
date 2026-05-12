@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
 import { fetchBooksFromApi, toggleFavoriteBook, fetchUserFavorites, fetchRestrictedBooksFromApi } from '../services/audiobookService'
-import { IMAGES_URL, DOWNLOADS_URL, API_URL } from '../config'
+import { IMAGES_URL, DOWNLOADS_URL, API_URL, HOST } from '../config'
 
 
 const books = ref([])
@@ -77,7 +77,7 @@ const fetchBooks = async () => {
     books.value = await fetchBooksFromApi()
   } catch (err) {
     console.error('Erro ao buscar livros:', err)
-    error.value = 'Falha ao carregar os livros. Verifique se o backend está rodando na porta 8080 e se o CORS está liberado.'
+    error.value = `Falha ao carregar os livros. Verifique se o backend está rodando em ${HOST} e se o CORS está liberado.`;
   } finally {
     isLoading.value = false
   }
