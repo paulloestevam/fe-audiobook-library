@@ -256,7 +256,7 @@ const handleUpload = async (files) => {
             👥 Configurações de Usuários
           </router-link>
           <router-link to="/" class="nav-link">
-            📚 Voltar para Biblioteca
+            📚 Voltar para Audiobooks
           </router-link>
         </div>
       </div>

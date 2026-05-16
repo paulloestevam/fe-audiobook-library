@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "node src/deploy.js"
   },
   "dependencies": {
     "vue": "^3.5.32",
@@ -14,6 +15,8 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.6",
+    "dotenv": "^17.4.2",
+    "node-ssh": "^13.2.1",
     "vite": "^8.0.10"
   }
 }

@@ -225,7 +225,7 @@ const getDownloadUrl = (filename) => {
     <div class="controls">
       <div class="header-top">
         <div class="header-title">
-          <h1>📚 Biblioteca</h1>
+          <h1>📚 Audiobooks</h1>
           <span class="book-count">Livros: {{ filteredBooks.length }}</span>
         </div>
         <div class="header-links">
