@@ -3,6 +3,7 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { fetchBooksFromApi, toggleFavoriteBook, fetchUserFavorites, fetchRestrictedBooksFromApi } from '../services/audiobookService'
 import { IMAGES_URL, DOWNLOADS_URL, API_URL, HOST } from '../config'
 
+const SHOW_ALL_SUBGENRES = false
 
 const books = ref([])
 const viewMode = ref('mode-compact')
@@ -30,17 +31,27 @@ const subGenres = computed(() => {
     }
   }
   
-  const subSet = new Set()
+  const subGenreCounts = {}
   relevantBooks.forEach(b => {
     if (b.subGenre && b.subGenre.trim()) {
-      subSet.add(b.subGenre.trim())
+      const sg = b.subGenre.trim()
+      subGenreCounts[sg] = (subGenreCounts[sg] || 0) + 1
     }
   })
-  return Array.from(subSet).sort()
+  
+  let validSubGenres = Object.keys(subGenreCounts)
+  if (!SHOW_ALL_SUBGENRES) {
+    validSubGenres = validSubGenres.filter(sg => subGenreCounts[sg] > 1)
+  }
+  
+  return validSubGenres.sort()
 })
 
-watch(selectedGenre, () => {
+watch(selectedGenre, (newVal) => {
   selectedSubGenre.value = ''
+  if (newVal === 'Séries') {
+    sortOption.value = 'author'
+  }
 })
 const activeBookId = ref(null)
 const isLoading = ref(true)
@@ -330,7 +341,7 @@ const getDownloadUrl = (filename) => {
             :key="sub"
             class="subgenre-btn"
             :class="{ active: selectedSubGenre === sub }" 
-            @click="selectedSubGenre = sub">
+            @click="selectedSubGenre = selectedSubGenre === sub ? '' : sub">
             {{ sub }}
           </button>
         </div>
