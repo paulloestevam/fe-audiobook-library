@@ -149,10 +149,17 @@
 .cell-title {
   font-weight: 600;
   color: #212529;
-  max-width: 350px;
+  max-width: 200px;
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.cell-subgenre {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .cell-desc {

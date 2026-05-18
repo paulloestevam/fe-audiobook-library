@@ -73,6 +73,17 @@ export const toggleBookRestriction = async (id) => {
   return await response.json()
 }
 
+export const toggleBookSeries = async (id) => {
+  const response = await fetch(`${API_URL}/books/${id}/toggle-series`, {
+    method: 'PATCH',
+    headers: getAuthHeaders()
+  })
+  if (!response.ok) {
+    throw new Error(`Erro HTTP: ${response.status}`)
+  }
+  return await response.json()
+}
+
 export const updateBookGenre = async (id, genre) => {
   const response = await fetch(`${API_URL}/books/${id}/genre`, {
     method: 'PATCH',

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { fetchBooksAllFromApi, toggleBookRestriction, updateBookGenre, deleteBook, uploadZips } from '../services/audiobookService'
+import { fetchBooksAllFromApi, toggleBookRestriction, updateBookGenre, deleteBook, uploadZips, toggleBookSeries } from '../services/audiobookService'
 
 const router = useRouter()
 
@@ -128,6 +128,19 @@ const handleToggleRestriction = async (bookId) => {
     alert('Erro ao alternar restrição.')
   }
   closeMenu()
+}
+
+const handleToggleSeries = async (bookId) => {
+  try {
+    const updatedBook = await toggleBookSeries(bookId)
+    const index = books.value.findIndex(b => b.id === bookId)
+    if (index !== -1) {
+      books.value[index] = updatedBook
+    }
+  } catch (err) {
+    console.error('Erro ao alternar série:', err)
+    alert('Erro ao alternar série.')
+  }
 }
 
 const handleUpdateGenre = async (bookId, genre) => {
@@ -295,18 +308,18 @@ const handleUpload = async (files) => {
       <table class="admin-table">
         <thead>
           <tr>
-            <th @click="sortBy('title')" class="sortable">Título <span v-if="sortColumn === 'title'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
-            <th @click="sortBy('author')" class="sortable">Autor <span v-if="sortColumn === 'author'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
-            <th @click="sortBy('dateAdded')" class="sortable">Data <span v-if="sortColumn === 'dateAdded'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
-            <th @click="sortBy('genre')" class="sortable">Gênero <span v-if="sortColumn === 'genre'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
-            <th @click="sortBy('subGenre')" class="sortable">Sub-gênero <span v-if="sortColumn === 'subGenre'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
-            <th @click="sortBy('series')" class="sortable text-center" title="Série">📚 <span v-if="sortColumn === 'series'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
-            <th @click="sortBy('duration')" class="sortable">Duração <span v-if="sortColumn === 'duration'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
-            <th @click="sortBy('rating')" class="sortable text-center">Nota <span v-if="sortColumn === 'rating'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+            <th @click="sortBy('title')"        class="sortable">Título <span v-if="sortColumn === 'title'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+            <th @click="sortBy('author')"       class="sortable">Autor <span v-if="sortColumn === 'author'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+            <th @click="sortBy('dateAdded')"    class="sortable">Data <span v-if="sortColumn === 'dateAdded'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+            <th @click="sortBy('genre')"        class="sortable">Gênero <span v-if="sortColumn === 'genre'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+            <th @click="sortBy('subGenre')"     class="sortable cell-subgenre">Sub-gênero <span v-if="sortColumn === 'subGenre'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+            <th @click="sortBy('series')"       class="sortable text-center" title="Série">📚 <span v-if="sortColumn === 'series'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+            <th @click="sortBy('duration')"     class="sortable">Duração <span v-if="sortColumn === 'duration'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+            <th @click="sortBy('rating')"       class="sortable text-center">Nota <span v-if="sortColumn === 'rating'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
             <th @click="sortBy('reviewsCount')" class="sortable text-center">Av. <span v-if="sortColumn === 'reviewsCount'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
-            <th @click="sortBy('description')" class="sortable">Desc. <span v-if="sortColumn === 'description'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
-            <th @click="sortBy('urlAmazon')" class="sortable text-center">Link <span v-if="sortColumn === 'urlAmazon'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
-            <th @click="sortBy('restricted')" class="sortable text-center">🔒 <span v-if="sortColumn === 'restricted'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+            <th @click="sortBy('description')"  class="sortable">Desc. <span v-if="sortColumn === 'description'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+            <th @click="sortBy('urlAmazon')"    class="sortable text-center">Link <span v-if="sortColumn === 'urlAmazon'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+            <th @click="sortBy('restricted')"   class="sortable text-center">🔒 <span v-if="sortColumn === 'restricted'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
             <th class="actions-col"></th>
           </tr>
         </thead>
@@ -316,9 +329,9 @@ const handleUpload = async (files) => {
             <td class="cell-author">{{ book.author }}</td>
             <td>{{ formatDate(book.dateAdded) }}</td>
             <td><span class="badge" :class="getGenreClass(book.genre)">{{ book.genre || 'N/A' }}</span></td>
-            <td :title="book.subGenre">{{ formatSubGenre(book.subGenre) }}</td>
-            <td class="text-center">
-              <span v-if="book.series" title="Série">✔️</span>
+            <td class="cell-subgenre" :title="book.subGenre">{{ formatSubGenre(book.subGenre) }}</td>
+            <td class="text-center" @click="handleToggleSeries(book.id)" style="cursor: pointer;" title="Alternar Série">
+              <span v-if="book.series">✔️</span>
               <span v-else>-</span>
             </td>
             <td class="cell-duration">{{ book.duration || '-' }}</td>

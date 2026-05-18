@@ -173,6 +173,11 @@ const handleLogout = () => {
   window.location.reload()
 }
 
+const normalizeText = (text) => {
+  if (!text) return ''
+  return text.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+}
+
 const filteredBooks = computed(() => {
   let result = books.value
 
@@ -191,11 +196,13 @@ const filteredBooks = computed(() => {
   }
 
   if (searchQuery.value) {
-    const q = searchQuery.value.toLowerCase()
-    result = result.filter(b => 
-      b.title?.toLowerCase().includes(q) || 
-      b.author?.toLowerCase().includes(q)
-    )
+    const q = normalizeText(searchQuery.value)
+    if (q) {
+      result = result.filter(b => 
+        normalizeText(b.title).includes(q) || 
+        normalizeText(b.author).includes(q)
+      )
+    }
   }
 
   result = [...result].sort((a, b) => {
@@ -229,11 +236,13 @@ const getDownloadUrl = (filename) => {
   if (filename.includes('http')) return filename
   return `${DOWNLOADS_URL}/${filename}`
 }
+
+const isDev = import.meta.env.DEV
 </script>
 
 <template>
   <div>
-    <div class="controls">
+    <div :class="['controls', { 'dev-env': isDev }]">
       <div class="header-top">
         <div class="header-title">
           <h1>📚 Audiobooks</h1>

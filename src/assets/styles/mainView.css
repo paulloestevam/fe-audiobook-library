@@ -6,6 +6,10 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
+.controls.dev-env {
+    background: #ffe5b7;
+}
+
 .header-top {
     display: flex;
     justify-content: space-between;
@@ -79,7 +83,8 @@ h1 {
 }
 
 .restricted-link.pending {
-    background-color: #f39c12; /* Laranja para indicar aviso/pendência */
+    background-color: #f39c12;
+    /* Laranja para indicar aviso/pendência */
     color: white;
 }
 
