@@ -6,6 +6,7 @@ import { fetchBooksAllFromApi, toggleBookRestriction, updateBookGenre, deleteBoo
 const router = useRouter()
 
 const books = ref([])
+const searchQuery = ref('')
 const sortColumn = ref('dateAdded')
 const sortDirection = ref('desc')
 const isLoading = ref(true)
@@ -42,6 +43,17 @@ onUnmounted(() => {
 
 const sortedBooks = computed(() => {
   let result = [...books.value]
+
+  if (searchQuery.value) {
+    const q = searchQuery.value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+    if (q) {
+      result = result.filter(b => {
+        const titleNorm = (b.title || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+        const authorNorm = (b.author || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+        return titleNorm.includes(q) || authorNorm.includes(q)
+      })
+    }
+  }
 
   result.sort((a, b) => {
     let valA = a[sortColumn.value]
@@ -262,15 +274,27 @@ const handleUpload = async (files) => {
       <div class="header-top">
         <div class="header-title">
           <h1>⚙️ Painel de Administração</h1>
-          <span class="book-count">Livros: {{ books.length }}</span>
+          <span class="book-count">
+            Livros: {{ sortedBooks.length }}{{ sortedBooks.length !== books.length ? ' de ' + books.length : '' }}
+          </span>
         </div>
-        <div class="header-actions" style="display: flex; gap: 15px; align-items: center;">
+        <div class="header-actions">
           <router-link to="/admin/users" class="nav-link">
             👥 Configurações de Usuários
           </router-link>
           <router-link to="/" class="nav-link">
             📚 Voltar para Audiobooks
           </router-link>
+        </div>
+      </div>
+      <div class="header-bottom">
+        <div class="search-group">
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Pesquisar livros por título ou autor..." 
+            v-model="searchQuery"
+          />
         </div>
       </div>
     </div>

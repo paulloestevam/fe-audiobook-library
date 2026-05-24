@@ -41,7 +41,7 @@ const subGenres = computed(() => {
   
   let validSubGenres = Object.keys(subGenreCounts)
   if (!SHOW_ALL_SUBGENRES) {
-    validSubGenres = validSubGenres.filter(sg => subGenreCounts[sg] > 1)
+    validSubGenres = validSubGenres.filter(sg => subGenreCounts[sg] > 0)
   }
   
   return validSubGenres.sort()
@@ -342,7 +342,7 @@ const isDev = import.meta.env.DEV
           <button 
             class="subgenre-btn"
             :class="{ active: selectedSubGenre === '' }" 
-            @click="selectedSubGenre = ''">
+            @click="selectedSubGenre = ''; searchQuery = ''">
             Todos
           </button>
           <button 
@@ -350,7 +350,7 @@ const isDev = import.meta.env.DEV
             :key="sub"
             class="subgenre-btn"
             :class="{ active: selectedSubGenre === sub }" 
-            @click="selectedSubGenre = selectedSubGenre === sub ? '' : sub">
+            @click="selectedSubGenre = selectedSubGenre === sub ? '' : sub; searchQuery = ''">
             {{ sub }}
           </button>
         </div>

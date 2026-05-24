@@ -107,6 +107,7 @@ const handleCancel = () => {
             <option value="Não-ficção">Não-ficção</option>
             <option value="Literatura">Literatura</option>
             <option value="">Outro / N/A</option>
+            <option value="00 Outros 2">00 Outros 2</option>
           </select>
         </div>
 

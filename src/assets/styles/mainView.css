@@ -220,6 +220,12 @@ h1 {
     background: #fff;
 }
 
+.btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
 .btn-group button {
     padding: 8px 16px;
     border: none;
@@ -227,7 +233,7 @@ h1 {
     background: #ddd;
     font-weight: bold;
     border-radius: 4px;
-    margin-left: 5px;
+    margin: 0;
     transition: 0.2s;
     color: #333;
 }
@@ -711,6 +717,30 @@ h1 {
 
     .mode-compact {
         grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .header-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .header-title {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header-links {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
     }
 }
 
