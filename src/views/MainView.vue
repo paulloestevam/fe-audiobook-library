@@ -9,6 +9,7 @@ const books = ref([])
 const viewMode = ref('mode-compact')
 const searchQuery = ref('')
 const sortOption = ref('recent')
+const sortOrder = ref('desc')
 const selectedGenre = ref('')
 const selectedSubGenre = ref('')
 const isSubgenresExpanded = ref(false)
@@ -53,6 +54,19 @@ watch(selectedGenre, (newVal) => {
     sortOption.value = 'author'
   }
 })
+
+watch(sortOption, (newOption) => {
+  if (newOption === 'recent' || newOption === 'popularity' || newOption === 'duration') {
+    sortOrder.value = 'desc'
+  } else {
+    sortOrder.value = 'asc'
+  }
+})
+
+const toggleSortOrder = () => {
+  sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
+}
+
 const activeBookId = ref(null)
 const isLoading = ref(true)
 const error = ref(null)
@@ -206,18 +220,19 @@ const filteredBooks = computed(() => {
   }
 
   result = [...result].sort((a, b) => {
+    let comparison = 0
     if (sortOption.value === 'name') {
-      return (a.title || '').localeCompare(b.title || '')
+      comparison = (a.title || '').localeCompare(b.title || '')
     } else if (sortOption.value === 'recent') {
-      return new Date(b.dateAdded || 0).getTime() - new Date(a.dateAdded || 0).getTime()
+      comparison = new Date(a.dateAdded || 0).getTime() - new Date(b.dateAdded || 0).getTime()
     } else if (sortOption.value === 'author') {
-      return (a.author || '').localeCompare(b.author || '')
+      comparison = (a.author || '').localeCompare(b.author || '')
     } else if (sortOption.value === 'duration') {
-      return (b.duration || '').localeCompare(a.duration || '')
+      comparison = (a.duration || '').localeCompare(b.duration || '')
     } else if (sortOption.value === 'popularity') {
-      return (b.reviewsCount || 0) - (a.reviewsCount || 0)
+      comparison = (a.reviewsCount || 0) - (b.reviewsCount || 0)
     }
-    return 0
+    return sortOrder.value === 'asc' ? comparison : -comparison
   })
 
   return result
@@ -294,13 +309,30 @@ const isDev = import.meta.env.DEV
             placeholder="Pesquisar..." 
             v-model="searchQuery"
           />
-          <select class="sort-select" v-model="sortOption">
-            <option value="recent">Mais recentes</option>
-            <option value="name">Nome</option>
-            <option value="author">Autor</option>
-            <option value="duration">Duração</option>
-            <option value="popularity">Popularidade</option>
-          </select>
+          <div class="sort-group">
+            <select class="sort-select" v-model="sortOption">
+              <option value="recent">Mais recentes</option>
+              <option value="name">Nome</option>
+              <option value="author">Autor</option>
+              <option value="duration">Duração</option>
+              <option value="popularity">Popularidade</option>
+            </select>
+            <button 
+              type="button"
+              class="sort-direction-btn" 
+              @click="toggleSortOrder" 
+              :title="sortOrder === 'asc' ? 'Ordenação Ascendente' : 'Ordenação Descendente'"
+            >
+              <svg v-if="sortOrder === 'asc'" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="19" x2="12" y2="5"></line>
+                <polyline points="5 12 12 5 19 12"></polyline>
+              </svg>
+              <svg v-else viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <polyline points="19 12 12 19 5 12"></polyline>
+              </svg>
+            </button>
+          </div>
         </div>
 
         <div class="genre-filters btn-group">
@@ -342,7 +374,7 @@ const isDev = import.meta.env.DEV
           <button 
             class="subgenre-btn"
             :class="{ active: selectedSubGenre === '' }" 
-            @click="selectedSubGenre = ''; searchQuery = ''">
+            @click="selectedSubGenre = ''; searchQuery = ''; sortOption = 'name'">
             Todos
           </button>
           <button 
@@ -350,7 +382,7 @@ const isDev = import.meta.env.DEV
             :key="sub"
             class="subgenre-btn"
             :class="{ active: selectedSubGenre === sub }" 
-            @click="selectedSubGenre = selectedSubGenre === sub ? '' : sub; searchQuery = ''">
+            @click="selectedSubGenre = selectedSubGenre === sub ? '' : sub; searchQuery = ''; sortOption = 'name'">
             {{ sub }}
           </button>
         </div>

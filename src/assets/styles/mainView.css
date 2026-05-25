@@ -205,6 +205,43 @@ h1 {
     min-width: 120px;
 }
 
+.sort-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sort-direction-btn {
+    padding: 4px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #777;
+    cursor: pointer;
+    outline: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    height: 32px;
+    width: 32px;
+    box-sizing: border-box;
+}
+
+.sort-direction-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--accent);
+}
+
+.sort-direction-btn:active {
+    transform: scale(0.9);
+}
+
+.sort-direction-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
 .search-input {
     padding: 8px;
     border-radius: 4px;
