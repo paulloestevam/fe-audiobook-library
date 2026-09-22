@@ -176,3 +176,13 @@ export const toggleUserRestrictedContent = async (id) => {
   }
   return await response.json()
 }
+
+export const fetchSubGenres = async () => {
+  const response = await fetch(`${API_URL}/books/subgenres`, {
+    headers: getAuthHeaders()
+  })
+  if (!response.ok) {
+    throw new Error(`Erro HTTP: ${response.status}`)
+  }
+  return await response.json()
+}

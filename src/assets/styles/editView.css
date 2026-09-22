@@ -91,6 +91,10 @@
   background: #ffffff;
 }
 
+#subGenre option {
+  font-size: 0.70rem;
+}
+
 textarea.form-input {
   resize: vertical;
   min-height: 100px;
@@ -195,14 +199,20 @@ textarea.form-input {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 600px) {
   .edit-form {
     grid-template-columns: 1fr;
   }
+
   .full-width {
     grid-column: span 1;
   }

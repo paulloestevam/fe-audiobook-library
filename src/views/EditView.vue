@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { fetchBookById, updateBookDetails } from '../services/audiobookService'
+import { fetchBookById, updateBookDetails, fetchSubGenres } from '../services/audiobookService'
 
 const route = useRoute()
 const router = useRouter()
@@ -10,6 +10,7 @@ const bookId = route.params.id
 const isLoading = ref(true)
 const isSaving = ref(false)
 const error = ref(null)
+const availableSubGenres = ref([])
 
 const book = ref({
   title: '',
@@ -26,7 +27,11 @@ const book = ref({
 
 onMounted(async () => {
   try {
-    const data = await fetchBookById(bookId)
+    const [data, subGenresData] = await Promise.all([
+      fetchBookById(bookId),
+      fetchSubGenres().catch(() => []) // Fallback in case of error fetching subgenres
+    ])
+    availableSubGenres.value = subGenresData
     book.value = {
       title: data.title || '',
       author: data.author || '',
@@ -113,7 +118,11 @@ const handleCancel = () => {
 
         <div class="form-group">
           <label for="subGenre">Sub-gênero</label>
-          <input type="text" id="subGenre" v-model="book.subGenre" class="form-input" />
+          <select id="subGenre" v-model="book.subGenre" class="form-input">
+            <option value="">Selecione...</option>
+            <option v-for="sg in availableSubGenres" :key="sg" :value="sg">{{ sg }}</option>
+            <option v-if="book.subGenre && !availableSubGenres.includes(book.subGenre)" :value="book.subGenre">{{ book.subGenre }}</option>
+          </select>
         </div>
 
         <div class="form-group">

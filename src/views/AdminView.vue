@@ -7,8 +7,8 @@ const router = useRouter()
 
 const books = ref([])
 const searchQuery = ref('')
-const sortColumn = ref('title')
-const sortDirection = ref('asc')
+const sortColumn = ref('dateAdded')
+const sortDirection = ref('desc')
 const isLoading = ref(true)
 const error = ref(null)
 
